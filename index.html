@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bir seçim et!</title>
+  <style>
+    /* ——————— [STİLLƏR] ——————— */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-image: url("red-roses2.jpg");
+      background-size: cover;
+      background-position: center;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+     
+      button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    h1 {
+      color: white;
+      font-size: 2.5em;
+      text-align: center;
+      margin-top: 30px;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    #button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      margin-top: 60px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 150px;
+    }
+
+    button:hover {
+      transform: scale(1.07);
+      opacity: 0.9;
+    }
+
+    #why-yes-btn:hover {
+      transform: scale(1.07);
+      opacity: 0.9;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    #button1 {
+      background-color: #90ee90;
+      color: #001f3f;
+    }
+
+    #button2 {
+      background-color: #8b0000;
+      color: white;
+      position: fixed;
+      z-index: 1100;
+      visibility: hidden;
+      transition: left 0.4s ease, top 0.4s ease;
+    }
+
+    #waiting-room {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px 12px 0 0;
+      padding: 10px 10px 15px 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 10;
+      font-size: 13px;
+      user-select: none;
+      color: #001f3f;
+      text-align: center; 
+    }
+
+    #why-yes-btn {
+      position: absolute;
+      left: 6px;
+      transform: none;
+      bottom: 100%;
+      z-index: 1001;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 10px 10px 0 0;
+      padding: 5.4px 17px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: auto;
+      min-width: unset;
+    }
+
+    #why-yes-btn:hover {
+      background-color: #e60000;
+    }
+
+    /* Yeni: Mədhiyyə düyməsi */
+    #medhiyye-btn {
+      position: absolute;
+      bottom: 100%;
+      left: 95px; /* "Səbəblər" düyməsinin sağında */
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 10px 10px 0 0;
+      padding: 5.3px 18px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: auto;
+      min-width: unset;
+      z-index: 1001;
+    }
+    #medhiyye-btn:hover {
+      background-color: #e60000;
+    }
+
+    #medhiyye-text {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+
+    /* MODALLAR */
+    #modal, #why-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      z-index: 2000;
+      text-align: center;
+
+      width: 90vw;
+      max-width: 300px;
+      max-height: auto;
+      height: auto;
+      overflow-y: auto;
+    }
+
+    #medhiyye-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      z-index: 2000;
+      text-align: center;
+      width: 90vw;
+      max-width: 300px;
+    }
+
+    @media (max-width: 480px) {
+      #why-modal {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        max-height: 70vh !important;
+        height: auto !important;
+        padding: 15px !important;
+        font-size: 16px !important;
+        overflow-y: auto !important;
+      }
+    }
+
+    #why-modal img {
+      max-width: 100%; 
+      border-radius: 10px;
+      margin-bottom: 5px;
+      transition: opacity 0.4s ease;
+      opacity: 1;
+    }
+
+    #why-text {
+      margin-bottom: 8px;
+      transition: opacity 0.4s ease;
+      opacity: 1;
+    }
+
+    .modal-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+    }
+
+    #why-modal button {
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 0;
+      flex: 1;
+    }
+
+    #why-modal button:hover {
+      background-color: #a30000;
+    }
+
+    #medhiyye-prev,
+    #medhiyye-next {
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      flex: 1;
+      margin: 0 5px;
+    }
+
+    #medhiyye-prev:hover,
+    #medhiyye-next:hover {
+      background-color: #a30000;
+    }
+
+    #medhiyye-modal .close-button {
+      background-color: #333333;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 30%;
+      transition: background-color 0.3s ease;
+    }
+
+    #medhiyye-modal .close-button:hover {
+      background-color: #555555;
+    }
+
+    #why-modal .close-button {
+      width: 50%;
+      margin-top: 8px;
+      flex: none;
+    }
+
+    #why-modal .close-button {
+      background-color: #333333;  /* istədiyin fon rəngi */
+      color: white;               /* mətn rəngi */
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 50%;
+      margin-top: 8px;
+      flex: none;
+      transition: background-color 0.3s ease;
+    }
+
+#why-modal .close-button:hover {
+  background-color: #555555;  /* hover zamanı rəng */
+}
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1999;
+      cursor: pointer;
+    }
+
+    .floating {
+      position: absolute;
+      animation: floatUp 2s linear forwards;
+      font-size: 24px;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+    }
+
+    .seat {
+      background: #eee;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 8px 0;
+      font-weight: bold;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+    }
+
+    .seat.taken {
+      background: #ffd1d1;
+      color: #a00;
+      cursor: default;
+    }
+
+    .seat.taken.user {
+      background: #90ee90;
+      color: #060;
+      cursor: default;
+    }
+
+    #seat-orkhan {
+      background-color: #90ee90;
+      color: #005500;
+    }
+
+    #clock {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    #mute-container {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 60px;
+      background: #8b0000;
+      border-bottom-left-radius: 100px;
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #mute-btn {
+      width: 34px;
+      height: 34px;
+      font-size: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 50%;
+      padding: 0;
+      margin: 0;
+      line-height: 34px;
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 3px black;
+      transform: translate(8px, -4px);
+    }
+
+    #confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      z-index: 1500;
+    }
+
+   .why-header {
+    background-color: #8b0000;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    margin: -15px -15px 10px -15px;
+    text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Mənimlə görüşə çıxarsan?</h1>
+
+  <div id="waiting-room">
+    <button id="why-yes-btn">Səbəblər</button>
+    <button id="medhiyye-btn">Mədhiyyə</button>
+    <h3>Düşünməyə ehtiyacın varsa əyləş və yuxarıdakı düymələri incələ</h3>
+    <div style="display: flex; justify-content: center; gap: 10px;">
+    <div class="seat taken" id="seat-orkhan">😣 Orxan</div>
+    <div class="seat" id="seat-empty">➕ Boş yer</div>
+   </div>
+
+    <div id="clock"></div>
+  </div>
+
+  <div id="button-container">
+    <button id="button1">Əlbəttə😍</button>
+  </div>
+
+  <button id="button2">Xeyr😔</button>
+
+  <div id="overlay"></div>
+  <div id="modal">Bunu seçəcəyini bilirdim. Qalanını 5 saniye sonra Whatsapp'dan danışaq🥳</div>
+
+  <div id="why-modal">
+    <div class="why-header">Niyə təklifimi qəbul etməlisən?!</div>
+
+    <img src="catflower.jpg" alt="Orxan şəkli" />
+    <p id="why-text">1. Çünki, xeyr düyməsinə basa bilmirsən😌</p>
+    <div class="modal-buttons">
+      <div class="nav-buttons">
+        <button onclick="prevReason()">Önceki</button>
+        <button onclick="nextReason()">Növbəti</button>
+      </div>
+      <button class="close-button">Bağla</button>
+    </div>
+  </div>
+
+   <div id="medhiyye-modal">
+  <div class="why-header">Mədhiyyə</div>
+  <p id="medhiyye-text" style="margin: 10px 0;">Sənin gözəlliyin qarşısında söz acizdir. 🌹<br>Hər baxışın bir şeir, hər gülüşün bir mədhiyyədir.</p>
+
+  <div class="modal-buttons">
+    <div class="nav-buttons">
+      <button id="medhiyye-prev">Önceki</button>
+      <button id="medhiyye-next">Növbəti</button>
+    </div>
+    <button class="close-button">Bağla</button>
+  </div>
+</div>
+
+  <canvas id="confetti"></canvas>
+
+  <audio id="backgroundMusic" src="fallinginlove.mpeg" loop></audio>
+  <audio id="successSound" src="https://www.soundjay.com/human/sounds/applause-01.mp3" preload="auto"></audio>
+	
+  <div id="mute-container">
+    <button id="mute-btn" title="Səsi aç/bağla">🔇</button>
+  </div>
+
+  <script>
+    const button1 = document.getElementById("button1");
+    const button2 = document.getElementById("button2");
+    const successSound = document.getElementById("successSound");
+    const modal = document.getElementById("modal");
+    const overlay = document.getElementById("overlay");
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    const seatEmpty = document.getElementById("seat-empty");
+    const seatOrkhan = document.getElementById("seat-orkhan");
+    const bgMusic = document.getElementById("backgroundMusic");
+    const muteBtn = document.getElementById("mute-btn");
+    const whyModal = document.getElementById("why-modal");
+    const whyImg = whyModal.querySelector("img");
+    const whyText = document.getElementById("why-text");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const rect = button1.getBoundingClientRect();
+      const offset = 20;
+      button2.style.left = rect.left + "px";
+      button2.style.top = (rect.bottom + offset) + "px";
+      button2.style.visibility = "visible";
+    });
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    seatEmpty.addEventListener("click", () => {
+      if (!seatEmpty.classList.contains("taken")) {
+        seatEmpty.classList.add("taken", "user");
+        seatEmpty.innerHTML = "😄 Ləman";
+        seatOrkhan.innerHTML = "😄 Orxan";
+        seatEmpty.style.cursor = "default";
+      }
+    });
+
+    button1.addEventListener("click", () => {
+      successSound.currentTime = 0;
+      successSound.play().catch(e => console.warn("Səs səslənmədi:", e));
+      showHearts(button1);
+      launchConfetti();
+
+      let countdown = 5;
+      overlay.style.display = "block";
+      modal.style.display = "block";
+      modal.innerText = `Bunu seçəcəyini bilirdim. Qalanını ${countdown} saniyə sonra WhatsApp-dan danışaq🥳`;
+      button2.style.display = "none";
+
+      const intervalId = setInterval(() => {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(intervalId);
+          window.location.href = "https://wa.me/994507808440";
+        } else {
+          modal.innerText = `Bunu seçəcəyini bilirdim. Qalanını ${countdown} saniyə sonra WhatsApp-dan danışaq🥳`;
+        }
+      }, 1000);
+    });
+
+    button2.addEventListener("click", (e) => {
+      e.preventDefault();
+      showCrying(button2);
+      const buttonWidth = button2.offsetWidth;
+      const buttonHeight = button2.offsetHeight;
+      const margin = 20;
+      const maxX = window.innerWidth - buttonWidth - margin;
+      const maxY = window.innerHeight - buttonHeight - margin;
+      const randX = Math.floor(Math.random() * maxX);
+      const randY = Math.floor(Math.random() * maxY);
+      button2.style.left = `${randX}px`;
+      button2.style.top = `${randY}px`;
+    });
+
+    document.getElementById("why-yes-btn").addEventListener("click", () => {
+      showWhyModal();
+    });
+
+      const medhiyyeModal = document.getElementById("medhiyye-modal");
+
+      document.getElementById("medhiyye-btn").addEventListener("click", () => {
+      overlay.style.display = "block";
+      medhiyyeModal.style.display = "block";
+    });
+
+medhiyyeModal.querySelector(".close-button").addEventListener("click", () => {
+  medhiyyeModal.style.display = "none";
+  overlay.style.display = "none";
+});
+
+const medhiyyeTexts = [
+     "Gözlərin mənim günümü işıqlandırır",
+   "Sənin gülüşün hər şeyi gözəlləşdirir",
+   "Səsin çox xoş və sakitləşdiricidir",
+   "Səninlə söhbət etmək çox xoşdur",
+   "Sən çox incə və nəzakətlisən",
+   "Sənin xasiyyətin mənə çox xoş gəlir",
+   "Sənin yanında zaman dayanır kimi olur",
+   "Sənin təbəssümün günəş kimi parıldayır",
+   "Sən həmişə düşüncələrimdə olursan",
+   "Sən mənim üçün xüsusi insansan",
+   "Sənin varlığın mənim üçün dəyərlidir",
+   "Sənin yanında özümü daha yaxşı hiss edirəm",
+   "Səninlə hər şey daha gözəl görünür",
+   "Sənin təbəssümün dünyadakı ən gözəl şeydir",
+   "Sənin gözəl ruhun hər şeyi fərqləndirir",
+   "Sənin yanında olmaq sanki evə qayıtmaq kimidir",
+   "Sən çox dəyərli insansan",
+   "Sənin təbəssümün günəş kimi parıldayır",
+   "Sən mənim dünyamda xüsusi yer tutursan",
+   "Sənin yanında olmaq ən gözəl anlarımdandır",
+   "Sən mənim üçün ilham qaynağısan",
+   "Sən çox həssas və anlayışlısan",
+   "Səninlə danışmaq məni rahatladır",
+   "Sən mənim üçün əvəzsizsən",
+   "Sənin yanında özümü tam hiss edirəm",
+   "Sən həmişə düşüncələrimdə olursan",
+   "Sənin gülüşün mənə xoşbəxtlik gətirir",
+   "Sən çox mehriban və diqqətcilsən",
+   "Sənin yanında zaman sürətlə keçir",
+   "Sənin gülüşün ürəyimi isidir",
+   "Sən həmişə mənim düşündüyüm ilk insansan",
+   "Sənin yanında olmaq xoşbəxtlikdir",
+   "Sənin xasiyyətin çox nadir tapılan keyfiyyətdir",
+   "Səninlə olmaq hər zaman mənim üçün xüsusi anlar deməkdir",
+   "Sənin baxışların mənim dünyamı dəyişdirir",
+
+];
+
+let currentMedhiyyeIndex = 0;
+
+const medhiyyeTextEl = document.getElementById("medhiyye-text");
+const medhiyyePrevBtn = document.getElementById("medhiyye-prev");
+const medhiyyeNextBtn = document.getElementById("medhiyye-next");
+
+function updateMedhiyye() {
+  medhiyyeTextEl.style.opacity = 0;
+  medhiyyeTextEl.style.transform = "translateY(20px)";
+  setTimeout(() => {
+    medhiyyeTextEl.textContent = medhiyyeTexts[currentMedhiyyeIndex];
+    medhiyyeTextEl.style.opacity = 1;
+    medhiyyeTextEl.style.transform = "translateY(0)";
+    updateMedhiyyeNavButtons();
+  }, 300);
+}
+
+function updateMedhiyyeNavButtons() {
+  medhiyyePrevBtn.disabled = currentMedhiyyeIndex === 0;
+  medhiyyeNextBtn.disabled = currentMedhiyyeIndex === medhiyyeTexts.length - 1;
+}
+
+medhiyyePrevBtn.addEventListener("click", () => {
+  if (currentMedhiyyeIndex > 0) {
+    currentMedhiyyeIndex--;
+    updateMedhiyye();
+  }
+});
+
+medhiyyeNextBtn.addEventListener("click", () => {
+  if (currentMedhiyyeIndex < medhiyyeTexts.length - 1) {
+    currentMedhiyyeIndex++;
+    updateMedhiyye();
+  }
+});
+
+document.getElementById("medhiyye-btn").addEventListener("click", () => {
+  currentMedhiyyeIndex = 0;
+  updateMedhiyye();
+  overlay.style.display = "block";
+  medhiyyeModal.style.display = "block";
+});
+
+    function createFloatingEmoji(x, y, emoji) {
+      const el = document.createElement("div");
+      el.classList.add("floating");
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.innerText = emoji;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2000);
+    }
+
+    function showHearts(button) {
+      const rect = button.getBoundingClientRect();
+      for (let i = 0; i < 5; i++) {
+        const offsetX = Math.random() * button.offsetWidth;
+        const offsetY = Math.random() * button.offsetHeight;
+        createFloatingEmoji(rect.left + offsetX, rect.top + offsetY, "❤️");
+      }
+    }
+
+    function showCrying(button) {
+      const rect = button.getBoundingClientRect();
+      for (let i = 0; i < 5; i++) {
+        const offsetX = Math.random() * button.offsetWidth;
+        const offsetY = Math.random() * button.offsetHeight;
+        createFloatingEmoji(rect.left + offsetX, rect.top + offsetY, "😭");
+      }
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById("clock").innerText = now.toLocaleString();
+    }, 1000);
+
+    let confetti = [];
+
+    function launchConfetti() {
+      confetti = [];
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          color: `hsl(${Math.random() * 360}, 100%, 65%)`,
+          speed: Math.random() * 3 + 2,
+          tilt: Math.random() * 10 - 5,
+          tiltSpeed: Math.random() * 0.1 + 0.05,
+        });
+      }
+      requestAnimationFrame(drawConfetti);
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < confetti.length; i++) {
+        let c = confetti[i];
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.ellipse(c.x + c.tilt, c.y, c.r, c.r * 0.6, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        c.y += c.speed;
+        c.tilt += c.tiltSpeed;
+
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
+        }
+      }
+      if (confetti.length > 0) {
+        requestAnimationFrame(drawConfetti);
+      }
+    }
+
+    // Mute button and background music logic
+    let musicPlaying = false;
+    muteBtn.addEventListener("click", () => {
+      if (!musicPlaying) {
+        bgMusic.play().catch(() => {});
+        muteBtn.textContent = "🔊";
+        musicPlaying = true;
+      } else {
+        bgMusic.pause();
+        muteBtn.textContent = "🔇";
+        musicPlaying = false;
+      }
+    });
+
+    // Autoplay background music only after user interaction
+    function playMusicOnce() {
+      if (!musicPlaying) {
+        bgMusic.play().catch(() => {});
+        muteBtn.textContent = "🔊";
+        musicPlaying = true;
+      }
+      document.removeEventListener("click", playMusicOnce);
+    }
+    document.addEventListener("click", playMusicOnce);
+
+    // Səbəblər modal mətn və şəkillər
+    const reasons = [
+      {
+        text: "1. Çünki, xeyr düyməsinə basa bilmirsən😌",
+        img: "catflower.jpg"
+      },
+      {
+        text: "2. Çünki, nə vaxtdır kofe içmirəm😶",
+        img: "coffee.jpg"
+      },
+      {
+        text: "3. Çünki, beləliklə ölkənin xidmət iqtisadiyyatına töhfə verə bilərik",
+        img: "stonks.jpg"
+      },
+      {
+        text: "4. Çünki, qəbul etməsən gələn dəfə proqram yazmalı olacam😶‍🌫️",
+        img: "coding.jpg"
+      },
+      {
+        text: "5. Çünki, son 4 ildir ağlımdan çıxmırsan və hər nə qədər göstərmə fürsətim olmasa da səni çox sevirəm",
+        img: "Orxan.jpeg"
+      },
+      {
+        text: "You make me happier than I ever thought I could be. Could I be any happier?✨",
+        img: "chandler.jpg"
+      }
+
+    ];
+    let currentReasonIndex = 0;
+
+    function updateReason() {
+      whyText.style.opacity = 0;
+      whyImg.style.opacity = 0;
+      setTimeout(() => {
+        whyText.textContent = reasons[currentReasonIndex].text;
+        whyImg.src = reasons[currentReasonIndex].img;
+        whyImg.alt = "Səbəb " + (currentReasonIndex + 1);
+        whyText.style.opacity = 1;
+        whyImg.style.opacity = 1;
+        updateNavButtons();
+      }, 300);
+    }
+
+    function showWhyModal() {
+      updateReason();
+      overlay.style.display = "block";
+      whyModal.style.display = "block";
+    }
+
+    function closeWhyModal() {
+      overlay.style.display = "none";
+      whyModal.style.display = "none";
+    }
+
+    function nextReason() {
+     if (currentReasonIndex < reasons.length - 1) {
+     currentReasonIndex++;
+     updateReason();
+    }
+  }
+
+
+    function prevReason() {
+     if (currentReasonIndex > 0) {
+     currentReasonIndex--;
+     updateReason();
+    }
+  }
+
+
+    whyModal.querySelector(".close-button").addEventListener("click", closeWhyModal);
+    overlay.addEventListener("click", () => {
+      closeWhyModal();
+      medhiyyeModal.style.display = "none";
+      modal.style.display = "none";
+      overlay.style.display = "none";
+   });
+    function updateNavButtons() {
+      const prevBtn = whyModal.querySelector("button:nth-child(1)");
+      const nextBtn = whyModal.querySelector("button:nth-child(2)");
+      prevBtn.disabled = currentReasonIndex === 0;
+      nextBtn.disabled = currentReasonIndex === reasons.length - 1;
+   }
+
+  </script>
+</body>
+</html>
